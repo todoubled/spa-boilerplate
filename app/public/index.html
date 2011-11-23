@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SPA Boilerplate</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.0.6/modernizr.min.js"></script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <header></header>
+
+      <section></section>
+
+      <footer></footer>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="/application.js"></script>
+    <script>
+      $(document).ready(function() {
+        var App = require('app');
+        window.App = App.init();
+      });
+    </script>
+  </body>
+</html>

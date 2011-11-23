@@ -1,0 +1,19 @@
+{
+  "name":"spa-boilerplate",
+  "description":"Boilerplate for developing Single Page Apps with Node.js",
+  "version":"1.0.0",
+  "author":"Todd Larsen <toddlar@gmail.com>",
+  "dependencies": {
+    "coffee-script":"1.1.x",
+    "express":"2.4.x",
+    "notes":"0.0.x",
+    "colors":"",
+    "stitch":"",
+    "clean-css":"",
+    "uglify-js":"",
+    "stylus":"",
+    "docco":"",
+    "connect":"1.7.x",
+    "supervisor":"0.1.x"
+  }
+}
