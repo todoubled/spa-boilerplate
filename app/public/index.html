@@ -1,23 +1,69 @@
 <!doctype html>
 <html>
   <head>
-    <title>SPA Boilerplate</title>
-    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.0.6/modernizr.min.js"></script>
+    <title>TODO</title>
+    <link href="/style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
-    <div id="wrapper">
-      <header></header>
 
-      <section></section>
+    <div id="todoapp">
 
-      <footer></footer>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+      <div class="title">
+        <h1>Todos</h1>
+      </div>
+
+      <div class="content">
+
+        <div id="create-todo">
+          <input id="new-todo" placeholder="Enter a task..." type="text" />
+          <span class="ui-tooltip-top" style="display:none;">Press Enter to save this task</span>
+        </div>
+
+        <div id="todos">
+          <ul id="todo-list"></ul>
+        </div>
+
+        <div id="todo-stats"></div>
+
+      </div>
+
+    </div>  
+
+    <script type="text/template" id="item-template">
+      <div class="todo <%= done ? 'done' : '' %>">
+        <div class="display">
+          <input class="check" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+          <div class="todo-content"></div>
+          <span class="todo-destroy"></span>
+        </div>
+        <div class="edit">
+          <input class="todo-input" type="text" value="" />
+        </div>
+      </div>
+    </script>
+
+    <script type="text/template" id="stats-template">
+      <% if (total) { %>
+        <span class="todo-count">
+          <span class="number"><%= remaining %></span>
+          <span class="word"><%= remaining == 1 ? 'item' : 'items' %></span> left.
+        </span>
+      <% } %>
+      <% if (done) { %>
+        <span class="todo-clear">
+          <a href="#">
+            Clear <span class="number-done"><%= done %></span>
+            completed <span class="word-done"><%= done == 1 ? 'item' : 'items' %></span>
+          </a>
+        </span>
+      <% } %>
+    </script>	
+
+
     <script src="/application.js"></script>
     <script>
       $(document).ready(function() {
-        var App = require('app');
+        var App = require('controllers/app');
         window.App = App.init();
       });
     </script>

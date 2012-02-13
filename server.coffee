@@ -1,6 +1,5 @@
 express = require 'express'
 stylus = require 'stylus'
-connect = require 'connect'
 stitch = require 'stitch'
 app = express.createServer()
 port = 1110
@@ -8,8 +7,8 @@ port = 1110
 # Configure stylus to compile and serve all .styl files
 cssOptions =
   debug:true
-  src:"#{__dirname}/src"
-  dest:"#{__dirname}/public"
+  src:"#{__dirname}/app/src/stylesheets"
+  dest:"#{__dirname}/app/public"
   compile:compileMethod
 
 # Custom compiler for stylus
@@ -18,14 +17,24 @@ compileMethod = (str, path) ->
     .set 'filename', path
     .set 'compress', true
 
-package = stitch.createPackage paths:["#{__dirname}/src/javascripts"], dependencies:[]
+
+dependencies = [
+	"#{__dirname}/app/src/javascripts/jquery.js"	
+	"#{__dirname}/app/src/javascripts/json2.js"
+	"#{__dirname}/app/src/javascripts/underscore.js"
+	"#{__dirname}/app/src/javascripts/backbone.js"
+	"#{__dirname}/app/src/javascripts/backbone.localstorage.js"
+]
+
+
+package = stitch.createPackage paths:["#{__dirname}/app/src/coffeescripts"], dependencies:dependencies
 
 # Configure the server with stylus and browserify middleware
 app.configure () ->
   app.use app.router
   app.use stylus.middleware cssOptions
   app.get '/application.js', package.createServer()
-  app.use express.static "#{__dirname}/public"
+  app.use express.static "#{__dirname}/app/public"
 
 # Start the server
 app.listen port

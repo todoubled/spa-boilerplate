@@ -2,11 +2,11 @@
 {log, error} = console; print = log
 Notes = require 'notes'
 fs = require 'fs'
-sys = require 'sys'
 colors = require 'colors'
 stitch = require 'stitch'
-cssmin = require 'clean-css'
 jsmin = require 'uglify-js'
+Browser = require 'zombie'
+assert = require 'assert'
 
 shell = (cmds, callback) ->
     cmds = [cmds] if Object::toString.apply(cmds) isnt '[object Array]'
@@ -15,56 +15,69 @@ shell = (cmds, callback) ->
       error stderr.trim() if err
       callback() if callback
 
+
+task 'start', 'start the dev server', ->
+  confirm = "Development Server started"
+  shell 'node_modules/supervisor/lib/cli-wrapper.js server.coffee'
+  console.log "#{confirm.green}"
+
+
+task 'docs', 'build the docs', ->
+  confirm = "Documentation built: "
+  process.chdir "#{__dirname}/app"
+  shell '../node_modules/docco/bin/docco src/coffeescripts/collections/*.coffee' 
+  console.log "#{confirm.green} collections"
+  shell '../node_modules/docco/bin/docco src/coffeescripts/controllers/*.coffee' 
+  console.log "#{confirm.green} controllers"
+  shell '../node_modules/docco/bin/docco src/coffeescripts/models/*.coffee' 
+  console.log "#{confirm.green} models"
+  shell '../node_modules/docco/bin/docco src/coffeescripts/views/*.coffee' 
+  console.log "#{confirm.green} views"
+  process.chdir "#{__dirname}"
+
+
+task 'test', 'run Jasmine specs', ->
+  shell 'node_modules/jasmine-node/bin/jasmine-node --color --coffee app/spec/'
+
+
+task 'lint', 'run CoffeeScripts through the linter', ->
+  shell 'node_modules/coffeelint/bin/coffeelint -f linter.json app/src/coffeescripts/controllers/*'
+  shell 'node_modules/coffeelint/bin/coffeelint -f linter.json app/src/coffeescripts/collections/*'
+  shell 'node_modules/coffeelint/bin/coffeelint -f linter.json app/src/coffeescripts/models/*'
+  shell 'node_modules/coffeelint/bin/coffeelint -f linter.json app/src/coffeescripts/views/*'
+
+
 task 'notes', 'Print out notes from project', ->
-  notes = new Notes "#{__dirname}/app"
+  notes = new Notes "#{__dirname}/app/src/coffeescripts"
   notes.annotate()
 
 
-
-task 'docco', 'build the docs', (options) ->
-  shell 'docco app/*.coffee'
-
-
-
 task 'build', 'Compile CoffeeScript into final JS build', ->
-  # TODO: investigate dependencies option with stitch
-  package = stitch.createPackage paths:["#{__dirname}/app/src/javascripts"], dependencies:[]
+  confirm = "Compiled all scripts into application.js"
+  # These dependencies must match up with those in server.coffee
+  dependencies = [
+	  "#{__dirname}/app/src/javascripts/jquery.js"	
+	  "#{__dirname}/app/src/javascripts/json2.js"
+	  "#{__dirname}/app/src/javascripts/underscore.js"
+	  "#{__dirname}/app/src/javascripts/backbone.js"
+	  "#{__dirname}/app/src/javascripts/backbone.localstorage.js"
+  ]
+
+  package = stitch.createPackage paths:["#{__dirname}/app/src/coffeescripts"], dependencies:dependencies
   package.compile (err, source) ->
-    fs.writeFile "#{__dirname}/app/public/javascripts/application.js", source, (err) ->
-      if err then throw err
+    jsp = jsmin.parser
+    pro = jsmin.uglify
+    ast = jsp.parse source.toString()
+    ast = pro.ast_mangle ast
+    ast = pro.ast_squeeze ast
+    code = pro.gen_code ast
 
-  js = [
-    'javascripts/application.js'
-  ]
+    fs.writeFile "#{__dirname}/app/public/application.js", code, (err) ->
+      if err then throw err 
+      console.log "#{confirm.green}"
 
-  css = [
-    'stylesheets/normalize.css'
-    'stylesheets/style.css'
-  ]
 
-  fs.unlinkSync "#{__dirname}/app/public/stylesheets/application.min.css"
-  fs.unlinkSync "#{__dirname}/app/public/javascripts/application.min.js"
-
-  css.forEach (file, i) ->
-    fs.readFile "app/public/#{file}", (err, buf) ->
-      code = cssmin.process(buf.toString())
-      ws = fs.createWriteStream("#{__dirname}/app/public/stylesheets/application.min.css", flags: 'a', encoding: 'utf-8',mode: 0666)
-      ws.on 'error', (e) -> console.error e
-      #ws.write code
-      ws.write buf.toString()
-      ws.end()
-
-  js.forEach (file, i) ->
-    fs.readFile "app/public/#{file}", (err, buf) ->
-      jsp = jsmin.parser
-      pro = jsmin.uglify
-      ast = jsp.parse buf.toString()
-      ast = pro.ast_mangle ast
-      ast = pro.ast_squeeze ast
-      # FIXME: Bypassing uglify's parser, causes error
-      #code = pro.gen_code ast
-      code = buf.toString()
-      ws = fs.createWriteStream("#{__dirname}/app/public/javascripts/application.min.js", flags: 'a', encoding: 'utf-8',mode: 0666)
-      ws.on 'error', (e) -> console.error e
-      ws.write code
-      ws.end()
+task 'browse', 'Headlessly browse the app with zombie', ->
+  browser = new Browser()
+  browser.visit 'http://localhost:1110', (e, brs, status) ->
+    console.log brs.body
