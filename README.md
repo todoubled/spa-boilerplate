@@ -9,9 +9,10 @@ Everything in app/src gets bundled up into just 1 HTML file, 1 JavaScript file, 
 This is still under development but there's a lot here you can use as
 is.
 ### TODO:
-* expand on example zombie testing task
 * image spriting task
 * ssh deployment task
+* S3 deployment
+* Scaffolding
 
 ## What's included
 
@@ -22,7 +23,6 @@ is.
 ### Testing
 * linter
 * unit tests
-* headless browser with zombie
 
 ### Building
 * minification & concatenation
@@ -34,13 +34,12 @@ is.
 
 
 ## Install
-1. Clone Cakefile, linter.json, package.json, and server.coffee into the directory structure below
+1. Clone repo and modify as desired
 2. npm install
-3. npm install -g coffee-script
 
 
 ## Use
-Run ```cake``` to see available tasks. ```cake start``` will get you up and running for development.
+```make server``` will start a development server at localhost:1110
 
 
 ### Directory Structure

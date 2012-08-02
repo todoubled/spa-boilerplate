@@ -12,7 +12,6 @@
     "jasmine-node":"1.0.x",
     "supervisor":"",
     "uglify-js":"",
-    "assert":"",
     "coffee-script":"1.2.0"
   }
 }

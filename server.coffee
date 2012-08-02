@@ -19,11 +19,11 @@ compileMethod = (str, path) ->
 
 
 dependencies = [
-	"#{__dirname}/app/src/javascripts/jquery.js"	
-	"#{__dirname}/app/src/javascripts/json2.js"
-	"#{__dirname}/app/src/javascripts/underscore.js"
-	"#{__dirname}/app/src/javascripts/backbone.js"
-	"#{__dirname}/app/src/javascripts/backbone.localstorage.js"
+  "#{__dirname}/app/src/javascripts/jquery.js"
+  "#{__dirname}/app/src/javascripts/json2.js"
+  "#{__dirname}/app/src/javascripts/underscore.js"
+  "#{__dirname}/app/src/javascripts/backbone.js"
+  "#{__dirname}/app/src/javascripts/backbone.localstorage.js"
 ]
 
 
