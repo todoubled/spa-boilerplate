@@ -4,7 +4,7 @@
   "version":"1.0.0",
   "author":"Todd Larsen <toddlar@gmail.com>",
   "dependencies": {
-    "express":"2.5.8",
+    "express":"4.17.1",
     "stylus":"",
     "stitch":"0.3.3",
     "docco":"0.3.0",
